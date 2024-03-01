@@ -25,8 +25,11 @@ import { ArticlesResponseInterface } from '@app/article/types/articlesResponse.i
 export class ArticleController {
 	constructor(private readonly articleService: ArticleService) {}
 	@Get()
-	async findAll(@Query() query: any): Promise<ArticlesResponseInterface> {
-		return await this.articleService.findAll(query);
+	async findAll(
+		@User('id') currentUserId: number,
+		@Query() query: any,
+	): Promise<ArticlesResponseInterface> {
+		return await this.articleService.findAll(currentUserId, query);
 	}
 
 	@Post()
@@ -66,6 +69,32 @@ export class ArticleController {
 			updateArticleDto,
 		);
 
+		return this.articleService.buildArticleResponse(article);
+	}
+
+	@Post(':slug/favorite')
+	@UseGuards(AuthGuard)
+	async addArticleToFavorites(
+		@User('id') currentUserId: number,
+		@Param('slug') slug: string,
+	): Promise<ArticleResponseInterface> {
+		const article = await this.articleService.addArticleToFavorites(
+			currentUserId,
+			slug,
+		);
+		return this.articleService.buildArticleResponse(article);
+	}
+
+	@Delete(':slug/favorite')
+	@UseGuards(AuthGuard)
+	async removeArticleFromFavorites(
+		@User('id') currentUserId: number,
+		@Param('slug') slug: string,
+	): Promise<ArticleResponseInterface> {
+		const article = await this.articleService.removeArticleFromFavorites(
+			currentUserId,
+			slug,
+		);
 		return this.articleService.buildArticleResponse(article);
 	}
 
