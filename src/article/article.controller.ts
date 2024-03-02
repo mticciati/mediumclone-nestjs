@@ -9,7 +9,6 @@ import {
 	Query,
 	UseGuards,
 	UsePipes,
-	ValidationPipe,
 } from '@nestjs/common';
 import { ArticleService } from '@app/article/article.service';
 import { AuthGuard } from '@app/user/guards/auth.guard';
@@ -20,6 +19,7 @@ import { ArticleResponseInterface } from '@app/article/types/articleResponse.int
 import { DeleteResult } from 'typeorm';
 import { UpdateArticleDto } from '@app/article/dto/updateArticleDto.dto';
 import { ArticlesResponseInterface } from '@app/article/types/articlesResponse.interface';
+import { BackendValidation } from '@app/shared/pipes/backendValidation.pipe';
 
 @Controller('articles')
 export class ArticleController {
@@ -43,7 +43,7 @@ export class ArticleController {
 
 	@Post()
 	@UseGuards(AuthGuard)
-	@UsePipes(new ValidationPipe())
+	@UsePipes(new BackendValidation())
 	async create(
 		@User() currentUser: UserEntity,
 		@Body('article') createArticleDto: CreateArticleDto,
@@ -66,7 +66,7 @@ export class ArticleController {
 
 	@Put(':slug')
 	@UseGuards(AuthGuard)
-	@UsePipes(new ValidationPipe())
+	@UsePipes(new BackendValidation())
 	async updateArticle(
 		@User('id') currentUserId: number,
 		@Param('slug') slug: string,
