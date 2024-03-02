@@ -1,5 +1,3 @@
-import { UserType } from '@app/user/types/user.type'
+import { UserType } from '@app/user/types/user.type';
 
-export type ProfileType = {
-	profile: Omit<UserType, 'password, email'> & { following: boolean };
-}
+export type ProfileType = UserType & { following: boolean };
